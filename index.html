@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Graph Calculator</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <!-- <div> -->
+    <!--     <h1>Graph Calculator</h1> -->
+    <!--     <form> -->
+    <!--         <label for="input-func">Enter function:</label> -->
+    <!--         <input type="text" id="input-func" name="input-func" placeholder="e.g. 2x + 1"> -->
+    <!--         <button type="button" onclick="plot()">Draw Graph</button> -->
+    <!--     </form> -->
+    <!-- </div> -->
+    <!-- <div id="graph"></div> -->
+    <div class="container">
+        <h1>Graph Calculator</h1>
+        <form>
+            <label for="input-func"><span class="ru">Введите функцию</span><span class="kg"
+                    style="display:none;">Функцияны териңиз</span>:</label>
+            <input type="text" id="input-func" name="input-func" placeholder="2x+1 or 2x^3+3x-3">
+            <button type="button" onclick="plot()"><span class="ru">Показать график</span><span class="kg"
+                    style="display:none;">Графикти коргозуу</span></button>
+        </form>
+        <div>
+            <button id="ru-button" class="lang-button">Russian</button>
+            <button id="kg-button" class="lang-button">Kyrgyz</button>
+        </div>
+    </div>
+    <div class="container2">
+        <div id="graph"></div>
+    </div>
+    <script>
+        function switchLanguage(language) {
+            var elementsRu = document.getElementsByClassName('ru');
+            var elementsKg = document.getElementsByClassName('kg');
+            if (language == 'ru') {
+                for (var i = 0; i < elementsRu.length; i++) {
+                    elementsRu[i].style.display = 'inline';
+                }
+                for (var i = 0; i < elementsKg.length; i++) {
+                    elementsKg[i].style.display = 'none';
+                }
+                document.getElementById('ru-button').style.backgroundColor = '#4CAF50';
+                document.getElementById('kg-button').style.backgroundColor = '#0066cc';
+            } else {
+                for (var i = 0; i < elementsRu.length; i++) {
+                    elementsRu[i].style.display = 'none';
+                }
+                for (var i = 0; i < elementsKg.length; i++) {
+                    elementsKg[i].style.display = 'inline';
+                }
+                document.getElementById('ru-button').style.backgroundColor = '#0066cc';
+                document.getElementById('kg-button').style.backgroundColor = '#4CAF50';
+            }
+        }
+
+        document.getElementById('ru-button').addEventListener('click', function () {
+            switchLanguage('ru');
+        });
+
+        document.getElementById('kg-button').addEventListener('click', function () {
+            switchLanguage('kg');
+        });
+        function plot() {
+            // Get the input value from the form
+            const input = document.getElementById('input-func').value;
+
+            // Parse the input to get the function type (linear or quadratic) and coefficients
+            const pattern = /^([+-]?\d*)x\^2\s*([+-]\s*\d*x)?\s*([+-]?\d+)?$/;
+            const matches = input.match(pattern);
+            let a, b, c;
+            if (matches) {
+                a = matches[1] ? parseInt(matches[1]) : 0;
+                b = matches[2] ? parseInt(matches[2].replace(/\s/g, '')) : 0;
+                c = matches[3] ? parseInt(matches[3]) : 0;
+            } else {
+                const pattern = /^([+-]?\d*)x\s*([+-]?\s*\d+)?$/;
+                const matches = input.match(pattern);
+                if (matches) {
+                    a = 0;
+                    b = matches[1] ? parseInt(matches[1]) : 0;
+                    c = matches[2] ? parseInt(matches[2]) : 0;
+                } else {
+                    alert('Invalid input! Please enter a linear or quadratic function.');
+                    return;
+                }
+            }
+
+            // Generate the x and y values for the plot
+            const x = [];
+            const y = [];
+            for (let i = -10; i <= 10; i += 0.1) {
+                x.push(i);
+                y.push(a * i * i + b * i + c);
+            }
+
+            // Create the plot using Plotly
+            const data = [{x: x, y: y}];
+            const layout = {margin: {t: 0}};
+            Plotly.newPlot('graph', data, layout);
+        }
+    </script>
+</body>
+
+</html>
